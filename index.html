@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Turtle Graphics</title>
+</head>
+<body>
+    <canvas id="main-canvas" width="500" height="500"></canvas>
+    <form>
+        <textarea id="editor"></textarea>
+    </form>
+
+    <script src="turtle.js"></script>
+    <script>
+        const canvas = document.getElementById("main-canvas");
+        const editor = document.getElementById("editor");
+        const turtle = new Turtle(canvas);
+
+        let lastEditorValue = editor.value;
+        
+        // update the graphics every second
+        setInterval(() => {
+            // only update if the code changed
+            if (editor.value !== lastEditorValue) {
+                turtle.interpret(editor.value);
+                lastEditorValue = editor.value;
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
