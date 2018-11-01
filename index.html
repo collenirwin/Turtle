@@ -5,29 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Turtle Graphics</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <canvas id="main-canvas" width="500" height="500"></canvas>
-    <form>
-        <textarea id="editor"></textarea>
-    </form>
+    <canvas id="main-canvas"></canvas>
 
-    <script src="turtle.js"></script>
+    <!-- bad formatting here because the textarea accepts any spacing we include  -->
+    <textarea id="editor">
+forward 50
+right 90
+forward 50
+right 90
+forward 50
+right 90
+forward 50
+right 90</textarea>
+
+    <div id="error-window"></div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/turtle.js"></script>
+    <script src="js/interpreter.js"></script>
     <script>
         const canvas = document.getElementById("main-canvas");
         const editor = document.getElementById("editor");
-        const turtle = new Turtle(canvas);
+        const errorWindow = document.getElementById("error-window");
 
+        // make our canvas full-screen
+        sizeCanvasToWindow(canvas);
+
+        const turtle = new Turtle(canvas);
+        const interpreter = new Interpreter(turtle);
+
+        // run the code in the box
+        interpreter.parse(editor.value);
+
+        // last version of the code we tried to parse from the editor
         let lastEditorValue = editor.value;
+
+        // reset the turtle and try to run the code,
+        // showing exceptions in errorWindow.innerHTML
+        const interpret = () => {
+            // clear drawing area and reset turtle to its defaults
+            turtle.reset();
+
+            try {
+                // attempt to parse and run the code in the editor
+                interpreter.parse(editor.value);
+
+                // if we made it here, the code is valid
+                errorWindow.innerHTML = "";
+            } catch (ex) {
+                // display the exception to the user
+                errorWindow.innerHTML = ex;
+            }
+        };
         
         // update the graphics every second
         setInterval(() => {
             // only update if the code changed
             if (editor.value !== lastEditorValue) {
-                turtle.interpret(editor.value);
+                interpret();
+                
+                // our code changed; update our lastEditorValue
                 lastEditorValue = editor.value;
             }
         }, 1000);
+        
+        // resize canvas to full screen as the screen resizes
+        window.addEventListener("resize", () => {
+            sizeCanvasToWindow(canvas);
+
+            // we will also want to reset and re-run the code
+            interpret();
+        });
     </script>
 </body>
 </html>

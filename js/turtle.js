@@ -1,17 +1,10 @@
-const turtleCommands = "";
-
 class Turtle {
-    constructor(canvas, x, y) {
+
+    constructor(canvas) {
         this.canvas = canvas;
 
-        // default to the center of the canvas
-        this.x = x || canvas.width / 2;
-        this.y = y || canvas.height / 2;
-        this.angle = 0;
-    }
-
-    interpret(code) {
-        console.log(code);
+        // initialize all properties to their defaults
+        this.reset();
     }
 
     left(degrees) {
@@ -27,13 +20,15 @@ class Turtle {
         this.angle += degrees;
 
         // wrap around
-        while (this.angle > 360) {
+        while (this.angle > 359) {
             this.angle = Math.abs(360 - this.angle);
         }
     }
 
-    forward(amount, draw) {
+    forward(amount) {
         const context = this.canvas.getContext("2d");
+
+        context.beginPath();
 
         // move to our point in the canvas
         context.moveTo(this.x, this.y);
@@ -45,24 +40,32 @@ class Turtle {
         this.x += amount * Math.cos(angleRadians);
         this.y += amount * Math.sin(angleRadians);
 
-        // draw our line if told to do so
-        if (draw) {
+        // draw our line if our pen is down
+        if (this.penDown) {
+            context.strokeStyle = this.color;
+            context.lineWidth = this.penWidth;
             context.lineTo(this.x, this.y);
             context.stroke();
         }
     }
 
-    back(amount, draw) {
-        this.forward(-amount, draw);
+    back(amount) {
+        this.forward(-amount);
     }
 
     reset() {
         // clear canvas
         this.canvas.getContext("2d").clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // go back to the center of the canvas
+        // default to the center of the canvas
         this.x = this.canvas.width / 2;
         this.y = this.canvas.height / 2;
+
         this.angle = 0;
+
+        this.color = "#333";
+
+        this.penWidth = 2;
+        this.penDown = true;
     }
 }
