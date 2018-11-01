@@ -29,6 +29,16 @@ class Interpreter {
                 this.singleNumberCommand("right", tokens[index + 1]);
                 index++;
             }
+            else if (["penwidth", "pw"].includes(token)) {
+                this.singleNumberCommand("penWidth", tokens[index + 1]);
+                index++;
+            }
+            else if (["pendown", "pd"].includes(token)) {
+                this.turtle.penDown = true;
+            }
+            else if (["penup", "pu"].includes(token)) {
+                this.turtle.penDown = false;
+            }
             else if (token !== "") {
                 throw `Unexpected token: ${token}`;
             }
@@ -41,7 +51,14 @@ class Interpreter {
     // throws an exeption if not given a number
     singleNumberCommand(command, number) {
         if (isNumber(number)) {
-            this.turtle[command](parseFloat(number));
+            // if this command is a method, call it with the number as its param
+            if (this.turtle[command] instanceof Function) {
+                this.turtle[command](parseFloat(number));
+            }
+            // otherwise, set it to the number
+            else {
+                this.turtle[command] = parseFloat(number);
+            }
         }
         else {
             throw `Expected integer after <b>${command}</b> command`;
