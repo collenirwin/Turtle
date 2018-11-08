@@ -12,7 +12,7 @@ html, body {
     font-size: 1.0em;
     color: #eee;
     background-color: #333;
-    resize: horizontal;
+    resize: none;
     border: 0;
     outline: none;
     z-index: 2;
@@ -46,7 +46,6 @@ html, body {
         bottom: 0;
         height: 35%;
         width: 100%;
-        resize: vertical;
     }
 
     #error-window {
