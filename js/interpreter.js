@@ -11,7 +11,7 @@ class Interpreter {
         
         // we found a repeat, but it didn't match the above regex: bad syntax
         if (/\b(rpt|repeat)\s+/g.test(code) && repeatedInnerCode === code) {
-            throw "Invalid repeat statement";
+            throw "Invalid repeat command";
         }
 
         // if we found a loop, recurse, otherwise we're done
