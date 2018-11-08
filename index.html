@@ -12,10 +12,17 @@
 
     <!-- bad formatting here because the textarea accepts any spacing we include  -->
     <textarea id="editor" spellcheck="false">
-repeat 4
+repeat 36
 [
-  forward 100
-  right 90
+  repeat 36
+  [
+    penup
+    forward 10
+    pendown
+    forward 5
+    right 10
+  ]
+  left 10
 ]</textarea>
 
     <div id="error-window"></div>
