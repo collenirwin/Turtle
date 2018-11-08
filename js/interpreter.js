@@ -4,7 +4,26 @@ class Interpreter {
         this.turtle = turtle;
     }
 
+    derecurse(code) {
+        // convert the repeat statement into its body repeated the specified number of times
+        const repeatedInnerCode = code.replace(/\b(rpt|repeat)\s+(\d+)\s*\[([^\]\[]+)\]/g,
+            (_, _1, repetitions, innerCode) => (innerCode + " ").repeat(repetitions));
+        
+        // we found a repeat, but it didn't match the above regex: bad syntax
+        if (/\b(rpt|repeat)\s+/g.test(code) && repeatedInnerCode === code) {
+            throw "Invalid repeat statement";
+        }
+
+        // if we found a loop, recurse, otherwise we're done
+        return repeatedInnerCode === code
+            ? code
+            : this.derecurse(repeatedInnerCode);
+    }
+
     parse(code) {
+        // take care of any repeat statements
+        code = this.derecurse(code);
+
         // split the code into tokens (which can be separated by any amount of space/newlines)
         const tokens = code.split(/\s+/g);
         let index = 0;
@@ -12,26 +31,21 @@ class Interpreter {
         // iterate over each token
         while (index < tokens.length) {
             const token = tokens[index];
-
+            
             if (["forward", "fd"].includes(token)) {
-                this.singleNumberCommand("forward", tokens[index + 1]);
-                index++;
+                this.singleNumberCommand("forward", tokens[++index]);
             }
             else if (["back", "bk"].includes(token)) {
-                this.singleNumberCommand("back", tokens[index + 1]);
-                index++;
+                this.singleNumberCommand("back", tokens[++index]);
             }
             else if (["left", "lt"].includes(token)) {
-                this.singleNumberCommand("left", tokens[index + 1]);
-                index++;
+                this.singleNumberCommand("left", tokens[++index]);
             }
             else if (["right", "rt"].includes(token)) {
-                this.singleNumberCommand("right", tokens[index + 1]);
-                index++;
+                this.singleNumberCommand("right", tokens[++index]);
             }
             else if (["penwidth", "pw"].includes(token)) {
-                this.singleNumberCommand("penWidth", tokens[index + 1]);
-                index++;
+                this.singleNumberCommand("penWidth", tokens[++index]);
             }
             else if (["pendown", "pd"].includes(token)) {
                 this.turtle.penDown = true;
@@ -61,7 +75,7 @@ class Interpreter {
             }
         }
         else {
-            throw `Expected integer after <b>${command}</b> command`;
+            throw `Expected number after ${command} command, instead got: '${number}'`;
         }
     }
 }
