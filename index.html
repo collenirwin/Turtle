@@ -54,10 +54,10 @@ right 90</textarea>
                 interpreter.parse(editor.value);
 
                 // if we made it here, the code is valid
-                errorWindow.innerHTML = "";
+                errorWindow.innerText = "";
             } catch (ex) {
                 // display the exception to the user
-                errorWindow.innerHTML = ex;
+                errorWindow.innerText = ex;
             }
         };
         
